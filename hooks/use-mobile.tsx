@@ -20,3 +20,6 @@ export function useMobile() {
 
   return isMobile
 }
+
+// Alias so both names are available
+export { useMobile as useIsMobile }
