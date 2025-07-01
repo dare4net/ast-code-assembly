@@ -82,6 +82,56 @@ export const STRUCTURED_TEMPLATES: StructuredTemplate[] = [
     ],
     size: 7,
   },
+  {
+    name: "While Loop with Counter",
+    description: "let i = 0; while (i < 5) { i++; }",
+    example: `let i = 0;\nwhile (i < 5) {\n  i++;\n}`,
+    difficulty: 3,
+    optimalSolution: [
+      "let", "i", "=", "0", ";", "while", "(", "i", "<", "5", ")", "{", "i", "++", ";", "}", ";"
+    ],
+    size: 7,
+  },
+  {
+    name: "Function with Conditional Return",
+    description: "function check(x) { if (x > 0) { return true; } else { return false; } }",
+    example: `function check(x) {\n  if (x > 0) {\n    return true;\n  } else {\n    return false;\n  }\n}`,
+    difficulty: 4,
+    optimalSolution: [
+      "function", "check", "(", "x", ")", "{", "if", "(", "x", ">", "0", ")", "{", "return", "true", ";", "}", "else", "{", "return", "false", ";", "}", "}", ";"
+    ],
+    size: 7,
+  },
+  {
+    name: "Array Push and Log",
+    description: "let arr = []; arr.push(1); console.log(arr);",
+    example: `let arr = [];\narr.push(1);\nconsole.log(arr);`,
+    difficulty: 2,
+    optimalSolution: [
+      "let", "arr", "=", "[", "]", ";", "arr", ".", "push", "(", "1", ")", ";", "console.log", "(", "arr", ")", ";"
+    ],
+    size: 7,
+  },
+  {
+    name: "For-Of Loop with Sum",
+    description: "let sum = 0; for (let n of nums) { sum += n; }",
+    example: `let sum = 0;\nfor (let n of nums) {\n  sum += n;\n}`,
+    difficulty: 4,
+    optimalSolution: [
+      "let", "sum", "=", "0", ";", "for", "(", "let", "n", "of", "nums", ")", "{", "sum", "+=", "n", ";", "}", ";"
+    ],
+    size: 7,
+  },
+  {
+    name: "Switch with Default",
+    description: "switch (x) { case 1: break; default: break; }",
+    example: `switch (x) {\n  case 1: break;\n  default: break;\n}`,
+    difficulty: 3,
+    optimalSolution: [
+      "switch", "(", "x", ")", "{", "case", "1", ":", "break", ";", "default", ":", "break", ";", "}", ";"
+    ],
+    size: 7,
+  },
 ]
 
 /**
