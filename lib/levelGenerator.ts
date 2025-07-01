@@ -47,10 +47,13 @@ function generateLevelBase(templateIndex?: number, useStructured = false) {
     // Calculate grid size: minimum square that fits all tokens, max 10
     const gridSize = Math.max(5, Math.min(10, Math.ceil(Math.sqrt(optimalTokens.length))))
     const totalSlots = gridSize * gridSize
-    // Create an array of empty slots
+    // Gather all possible tokens including empty
     const { TOKEN_CATEGORIES } = require("@/constants/tokens")
-    const emptyToken = TOKEN_CATEGORIES.empty.tokens[0]
-    let gridTokens: (string)[] = Array(totalSlots).fill(emptyToken)
+    const allTokens = Object.values(TOKEN_CATEGORIES)
+      .filter(cat => cat.tokens && cat.tokens.length > 0)
+      .flatMap(cat => cat.tokens)
+    // Fill grid with random tokens (including empty)
+    let gridTokens: (string)[] = Array(totalSlots)
     // Randomly pick slots to place optimal tokens
     let availableIndices = Array.from({length: totalSlots}, (_, i) => i)
     // Shuffle available indices
@@ -58,6 +61,12 @@ function generateLevelBase(templateIndex?: number, useStructured = false) {
     // Place each optimal token in a random slot
     for (let i = 0; i < optimalTokens.length; i++) {
       gridTokens[availableIndices[i]] = optimalTokens[i]
+    }
+    // Fill remaining slots with random tokens (including empty)
+    for (let i = optimalTokens.length; i < totalSlots; i++) {
+      let idx = availableIndices[i]
+      // Pick a random token from allTokens (including empty)
+      gridTokens[idx] = allTokens[Math.floor(Math.random() * allTokens.length)]
     }
     // Return a level-like object
     return {
