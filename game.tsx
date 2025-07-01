@@ -54,14 +54,28 @@ export default function CodeDisassemblyGame() {
       return
     }
 
-    playSlotSound()
-
-    const token = removeTokenFromGrid(position)!
-    const tokenCategory = getTokenCategory(token)
+    const token = grid[position]
+    const tokenCategory = getTokenCategory(token!)
     const currentContainer = containers[currentContainerIndex]
 
-    // If it's an empty token, just remove it and do nothing else
+    // If it's an empty token, just do nothing
     if (tokenCategory === "empty") {
+      return
+    }
+
+    // If buffer is full, only allow removing from grid if token matches current container
+    const bufferIsFull = buffer.every(slot => slot.token !== null)
+    if (bufferIsFull) {
+      if (
+        currentContainer &&
+        (currentContainer.category === tokenCategory || tokenCategory === "gray") &&
+        currentContainer.collected.length < currentContainer.count
+      ) {
+        // Remove from grid and add to container
+        removeTokenFromGrid(position)
+        addTokenToContainer(token!)
+      }
+      // If not the right type, do nothing (token stays in grid)
       return
     }
 
@@ -71,12 +85,13 @@ export default function CodeDisassemblyGame() {
       (currentContainer.category === tokenCategory || tokenCategory === "gray") &&
       currentContainer.collected.length < currentContainer.count
     ) {
-      addTokenToContainer(token)
+      removeTokenFromGrid(position)
+      addTokenToContainer(token!)
     } else {
       // Try to place in buffer
-      const success = addTokenToBuffer(token, tokenCategory)
-      if (!success) {
-        console.log("Buffer full!")
+      const success = addTokenToBuffer(token!, tokenCategory)
+      if (success) {
+        removeTokenFromGrid(position)
       }
     }
   }

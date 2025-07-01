@@ -83,6 +83,8 @@ export function useGameState() {
         setBuffer(newBuffer)
         return true
       }
+      // Buffer is full: do not allow any more tokens to be added to buffer
+      // Indicate failure
       return false
     },
     [buffer],
