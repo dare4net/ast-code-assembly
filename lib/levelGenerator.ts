@@ -33,8 +33,11 @@ function generateLevelBase(templateIndex?: number, useStructured = false) {
       ? STRUCTURED_TEMPLATES[templateIndex]
       : STRUCTURED_TEMPLATES[Math.floor(Math.random() * STRUCTURED_TEMPLATES.length)]
 
-    // Build container requests from pattern
-    const containerRequests = template.pattern.map((p) => ({
+    // Build container requests from pattern (now generated dynamically)
+    // Generate pattern from optimalSolution
+    const { generatePatternFromTokens } = require("@/constants/templates")
+    const pattern = generatePatternFromTokens(template.optimalSolution)
+    const containerRequests = pattern.map((p: any) => ({
       category: p.category,
       count: p.count,
     }))

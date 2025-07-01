@@ -10,7 +10,7 @@ export function useGameState() {
   const [gridSize, setGridSize] = useState<number>(5)
   const [containers, setContainers] = useState<Container[]>([])
   const [currentContainerIndex, setCurrentContainerIndex] = useState(0)
-  const [buffer, setBuffer] = useState<BufferSlot[]>(Array(8).fill({ token: null, category: null }))
+  const [buffer, setBuffer] = useState<BufferSlot[]>(Array(5).fill({ token: null, category: null }))
   const [collectedTokens, setCollectedTokens] = useState<string[]>([])
   const [gameState, setGameState] = useState<GameState>("playing")
 
@@ -50,7 +50,7 @@ export function useGameState() {
     }
 
     setCurrentContainerIndex(0)
-    setBuffer(Array(8).fill({ token: null, category: null }))
+    setBuffer(Array(5).fill({ token: null, category: null }))
     setCollectedTokens([])
     setGameState("playing")
   }, [])

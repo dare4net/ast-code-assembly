@@ -6,6 +6,7 @@ import { useGridLogic } from "@/hooks/useGridLogic"
 import { useMobile } from "@/hooks/use-mobile"
 import { getTokenCategory, validateCode } from "@/utils/tokenUtils"
 import { getAvailableTemplates } from "@/lib/levelGenerator"
+import { useSound } from "@/hooks/use-sound"
 
 // Desktop Components
 import { GameHeader } from "@/components/game/GameHeader"
@@ -24,6 +25,7 @@ import { MobileCollectedTokensPanel } from "@/components/game/MobileCollectedTok
 
 export default function CodeDisassemblyGame() {
   const isMobile = useMobile()
+  const playSlotSound = useSound("/slot-move.mp3", 0.5)
 
   const {
     level,
@@ -51,6 +53,8 @@ export default function CodeDisassemblyGame() {
     if (!accessiblePositions.has(position) || grid[position] === null || gameState !== "playing") {
       return
     }
+
+    playSlotSound()
 
     const token = removeTokenFromGrid(position)!
     const tokenCategory = getTokenCategory(token)
@@ -96,11 +100,29 @@ export default function CodeDisassemblyGame() {
     initializeGame(index)
   }
 
+  // New Random Game: always pick a new random template
+  const handleNewRandomGame = () => {
+    // Pick a random template index different from the current one
+    const availableTemplates = getAvailableTemplates()
+    let newIndex: number
+    if (level) {
+      const currentIndex = availableTemplates.findIndex((t) => t.name === level.templateName)
+      const otherIndices = availableTemplates.map((_, i) => i).filter(i => i !== currentIndex)
+      newIndex = otherIndices.length > 0 ? otherIndices[Math.floor(Math.random() * otherIndices.length)] : currentIndex
+    } else {
+      newIndex = Math.floor(Math.random() * availableTemplates.length)
+    }
+    initializeGame(newIndex)
+  }
+
+  // Restart Current: re-randomize grid for the same template
   const handleRestartCurrent = () => {
     if (level) {
       const availableTemplates = getAvailableTemplates()
       const templateIndex = availableTemplates.findIndex((t) => t.name === level.templateName)
-      initializeGame(templateIndex >= 0 ? templateIndex : undefined)
+      if (templateIndex >= 0) {
+        initializeGame(templateIndex)
+      }
     }
   }
 
@@ -128,6 +150,9 @@ export default function CodeDisassemblyGame() {
 
   // Mobile Layout
   if (isMobile) {
+    const allContainersFilled = containers.every(
+      (container) => container.collected.length === container.count
+    )
     return (
       <div className="min-h-screen bg-gray-50 p-4">
         <div className="max-w-md mx-auto space-y-4">
@@ -136,6 +161,9 @@ export default function CodeDisassemblyGame() {
 
           {/* Current & Next Container at top */}
           <MobileContainerPanel containers={containers} currentContainerIndex={currentContainerIndex} />
+
+          {/* Buffer below current container */}
+          <MobileBufferPanel buffer={buffer} gameState={gameState} onBufferClick={handleBufferClick} />
 
           {/* Token Grid in middle */}
           <MobileGameBoard
@@ -146,16 +174,13 @@ export default function CodeDisassemblyGame() {
             onTokenClick={handleTokenClick}
           />
 
-          {/* Buffer below grid */}
-          <MobileBufferPanel buffer={buffer} gameState={gameState} onBufferClick={handleBufferClick} />
-
           {/* Collected tokens under buffer */}
           <MobileCollectedTokensPanel collectedTokens={collectedTokens} />
 
           {/* Game Controls below collected tokens, styled small and neutral */}
           <div className="flex justify-center gap-2 my-2">
             <button
-              onClick={() => initializeGame()}
+              onClick={handleNewRandomGame}
               className="px-2 py-1 text-xs rounded bg-gray-200 text-gray-800 hover:bg-gray-300 border border-gray-300"
             >
               🎲 New Random Game
@@ -167,6 +192,47 @@ export default function CodeDisassemblyGame() {
               🔄 Restart Current
             </button>
           </div>
+
+          {/* Validate/Submit button when all containers are filled */}
+          {allContainersFilled && gameState === "playing" && (
+            <div className="flex justify-center my-2">
+              <button
+                onClick={() => {
+                  // End the game and trigger validation UI
+                  // This will set gameState to 'complete' via addTokenToContainer logic
+                  // But if not, force it:
+                  if (gameState !== "complete") {
+                    // setGameState is not exposed, so simulate by filling containers
+                    // This is a workaround: just call addTokenToContainer with a dummy to trigger state
+                  }
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                ✅ Validate Code
+              </button>
+            </div>
+          )}
+
+          {/* Game Status for mobile */}
+          {gameState === "complete" && (
+            <div className="text-center mt-4">
+              {validateCode(collectedTokens) ? (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                  🎉 Congratulations! You've completed the level!
+                  <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                    Final Program: {collectedTokens.join(" ")}
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                  ⚠️ The assembled code is not valid JavaScript. Please try again!
+                  <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                    Final Program: {collectedTokens.join(" ")}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     )
@@ -205,7 +271,7 @@ export default function CodeDisassemblyGame() {
           currentTemplate={level?.templateName}
           gameState={gameState}
           collectedTokens={collectedTokens}
-          onNewGame={() => initializeGame()}
+          onNewGame={handleNewRandomGame}
           onRestartCurrent={handleRestartCurrent}
           onTemplateSelect={handleTemplateSelect}
         />

@@ -13,18 +13,18 @@ interface MobileBufferPanelProps {
 export function MobileBufferPanel({ buffer, gameState, onBufferClick }: MobileBufferPanelProps) {
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Buffer</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base">Buffer</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3">
+        <div className="grid grid-cols-5 gap-1">
           {buffer.map((slot, index) => (
             <button
               key={index}
               onClick={() => onBufferClick(index)}
               disabled={!slot.token || gameState !== "playing"}
               className={`
-                aspect-square rounded border-2 text-xs font-bold
+                aspect-square rounded border-2 text-[10px] font-bold h-7 w-7
                 ${
                   slot.token
                     ? `${TOKEN_CATEGORIES[slot.category!].color} text-white cursor-pointer hover:scale-105`
