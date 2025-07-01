@@ -17,7 +17,7 @@ export function MobileBufferPanel({ buffer, gameState, onBufferClick }: MobileBu
         <CardTitle className="text-lg">Buffer</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 sm:gap-3">
           {buffer.map((slot, index) => (
             <button
               key={index}

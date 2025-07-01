@@ -7,9 +7,10 @@ import { generateLevel } from "@/lib/levelGenerator"
 export function useGameState() {
   const [level, setLevel] = useState<ValidatedLevel | null>(null)
   const [grid, setGrid] = useState<(string | null)[]>([])
+  const [gridSize, setGridSize] = useState<number>(5)
   const [containers, setContainers] = useState<Container[]>([])
   const [currentContainerIndex, setCurrentContainerIndex] = useState(0)
-  const [buffer, setBuffer] = useState<BufferSlot[]>(Array(5).fill({ token: null, category: null }))
+  const [buffer, setBuffer] = useState<BufferSlot[]>(Array(8).fill({ token: null, category: null }))
   const [collectedTokens, setCollectedTokens] = useState<string[]>([])
   const [gameState, setGameState] = useState<GameState>("playing")
 
@@ -26,20 +27,30 @@ export function useGameState() {
         return
       }
       setLevel(fallbackLevel)
+      setGrid([...fallbackLevel.gridTokens])
+      setGridSize(fallbackLevel.size)
+      setContainers(
+        fallbackLevel.containerRequests.map((req) => ({
+          category: req.category,
+          count: req.count,
+          collected: [],
+        })),
+      )
     } else {
       setLevel(newLevel)
+      setGrid([...newLevel.gridTokens])
+      setGridSize(newLevel.size)
+      setContainers(
+        newLevel.containerRequests.map((req) => ({
+          category: req.category,
+          count: req.count,
+          collected: [],
+        })),
+      )
     }
 
-    setGrid([...newLevel.gridTokens])
-    setContainers(
-      newLevel.containerRequests.map((req) => ({
-        category: req.category,
-        count: req.count,
-        collected: [],
-      })),
-    )
     setCurrentContainerIndex(0)
-    setBuffer(Array(5).fill({ token: null, category: null }))
+    setBuffer(Array(8).fill({ token: null, category: null }))
     setCollectedTokens([])
     setGameState("playing")
   }, [])
@@ -103,6 +114,7 @@ export function useGameState() {
     // State
     level,
     grid,
+    gridSize,
     containers,
     currentContainerIndex,
     buffer,

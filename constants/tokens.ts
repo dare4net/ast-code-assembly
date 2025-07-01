@@ -27,7 +27,9 @@ export const TOKEN_CATEGORIES: Record<TokenCategory, TokenCategoryData> = {
   },
   green: {
     name: "Declarations & Assignments",
+    // Split into subgroups for clarity
     tokens: [
+      // Declaration keywords
       "let",
       "const",
       "var",
@@ -35,6 +37,7 @@ export const TOKEN_CATEGORIES: Record<TokenCategory, TokenCategoryData> = {
       "class",
       "new",
       "this",
+      // Assignment operators
       "=",
       "+=",
       "-=",
@@ -43,6 +46,7 @@ export const TOKEN_CATEGORIES: Record<TokenCategory, TokenCategoryData> = {
       "%=",
       "++",
       "--",
+      // Variable names (ensure these are always present for green containers)
       "x",
       "y",
       "z",
@@ -141,5 +145,10 @@ export const TOKEN_CATEGORIES: Record<TokenCategory, TokenCategoryData> = {
     name: "Wild (Universal)",
     tokens: [";", ",", ".", ":", "?", '"', "'", "`"],
     color: "bg-gray-500 hover:bg-gray-600",
+  },
+  empty: {
+    name: "Empty Token",
+    tokens: ["[empty]"], // Special empty token
+    color: "bg-gray-500 hover:bg-gray-600", // Same as wildcards
   },
 }

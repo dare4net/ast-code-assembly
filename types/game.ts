@@ -1,5 +1,5 @@
 export type GameState = "playing" | "complete" | "game-over"
-export type TokenCategory = "blue" | "green" | "orange" | "purple" | "red" | "cyan" | "gray"
+export type TokenCategory = "blue" | "green" | "orange" | "purple" | "red" | "cyan" | "gray" | "empty"
 
 export interface Container {
   category: TokenCategory

@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useGameState } from "@/hooks/useGameState"
 import { useGridLogic } from "@/hooks/useGridLogic"
 import { useMobile } from "@/hooks/use-mobile"
-import { getTokenCategory } from "@/utils/tokenUtils"
+import { getTokenCategory, validateCode } from "@/utils/tokenUtils"
 import { getAvailableTemplates } from "@/lib/levelGenerator"
 
 // Desktop Components
@@ -55,6 +55,11 @@ export default function CodeDisassemblyGame() {
     const token = removeTokenFromGrid(position)!
     const tokenCategory = getTokenCategory(token)
     const currentContainer = containers[currentContainerIndex]
+
+    // If it's an empty token, just remove it and do nothing else
+    if (tokenCategory === "empty") {
+      return
+    }
 
     // Try to place in current container
     if (
@@ -129,16 +134,6 @@ export default function CodeDisassemblyGame() {
           {/* Header without legend */}
           <GameHeader currentTemplate={level?.templateName} showLegend={false} />
 
-          {/* Template Selection */}
-          <GameControls
-            currentTemplate={level?.templateName}
-            gameState={gameState}
-            collectedTokens={collectedTokens}
-            onNewGame={() => initializeGame()}
-            onRestartCurrent={handleRestartCurrent}
-            onTemplateSelect={handleTemplateSelect}
-          />
-
           {/* Current & Next Container at top */}
           <MobileContainerPanel containers={containers} currentContainerIndex={currentContainerIndex} />
 
@@ -157,20 +152,21 @@ export default function CodeDisassemblyGame() {
           {/* Collected tokens under buffer */}
           <MobileCollectedTokensPanel collectedTokens={collectedTokens} />
 
-          {/* Color legend at bottom */}
-          <ColorLegend />
-
-          {/* Game Status */}
-          {gameState === "complete" && (
-            <div className="text-center">
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                🎉 Congratulations! You've completed the level!
-                <div className="mt-2 text-sm font-mono bg-white p-2 rounded break-all">
-                  Final Program: {collectedTokens.join(" ")}
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Game Controls below collected tokens, styled small and neutral */}
+          <div className="flex justify-center gap-2 my-2">
+            <button
+              onClick={() => initializeGame()}
+              className="px-2 py-1 text-xs rounded bg-gray-200 text-gray-800 hover:bg-gray-300 border border-gray-300"
+            >
+              🎲 New Random Game
+            </button>
+            <button
+              onClick={handleRestartCurrent}
+              className="px-2 py-1 text-xs rounded bg-gray-200 text-gray-800 hover:bg-gray-300 border border-gray-300"
+            >
+              🔄 Restart Current
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -204,6 +200,7 @@ export default function CodeDisassemblyGame() {
           </div>
         </div>
 
+        {/* Template Selection - moved to bottom */}
         <GameControls
           currentTemplate={level?.templateName}
           gameState={gameState}
@@ -216,12 +213,21 @@ export default function CodeDisassemblyGame() {
         {/* Game Status */}
         {gameState === "complete" && (
           <div className="text-center mt-4">
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-              🎉 Congratulations! You've completed the level!
-              <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
-                Final Program: {collectedTokens.join(" ")}
+            {validateCode(collectedTokens) ? (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                🎉 Congratulations! You've completed the level!
+                <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                  Final Program: {collectedTokens.join(" ")}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                ⚠️ The assembled code is not valid JavaScript. Please try again!
+                <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                  Final Program: {collectedTokens.join(" ")}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

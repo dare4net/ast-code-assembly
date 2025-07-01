@@ -14,10 +14,30 @@ export function MobileContainerPanel({ containers, currentContainerIndex }: Mobi
   const nextContainer = currentContainerIndex < containers.length - 1 ? containers[currentContainerIndex + 1] : null
 
   return (
-    <div className="grid grid-cols-1 gap-4">
-      {/* Current Container */}
+    <div className="grid grid-cols-1 gap-2 sm:gap-4">
+      {/* Next Container (should be on top) */}
+      {nextContainer && (
+        <Card>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-lg">Next Container</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-4 h-4 rounded ${TOKEN_CATEGORIES[nextContainer.category].color.split(" ")[0]}`}
+                ></div>
+                <span className="text-sm">{TOKEN_CATEGORIES[nextContainer.category].name}</span>
+              </div>
+              <span className="text-sm text-gray-600">({nextContainer.count} tokens)</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Current Container (should be below next) */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2 sm:pb-3">
           <CardTitle className="text-lg">Current Container</CardTitle>
         </CardHeader>
         <CardContent>
@@ -35,7 +55,7 @@ export function MobileContainerPanel({ containers, currentContainerIndex }: Mobi
                 </div>
               </div>
               <Progress value={(currentContainer.collected.length / currentContainer.count) * 100} className="w-full" />
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-0.5 sm:gap-1">
                 {currentContainer.collected.map((token, idx) => (
                   <Badge key={idx} variant="secondary" className="text-xs">
                     {token}
@@ -46,26 +66,6 @@ export function MobileContainerPanel({ containers, currentContainerIndex }: Mobi
           )}
         </CardContent>
       </Card>
-
-      {/* Next Container */}
-      {nextContainer && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Next Container</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div
-                  className={`w-4 h-4 rounded ${TOKEN_CATEGORIES[nextContainer.category].color.split(" ")[0]}`}
-                ></div>
-                <span className="text-sm">{TOKEN_CATEGORIES[nextContainer.category].name}</span>
-              </div>
-              <span className="text-sm text-gray-600">({nextContainer.count} tokens)</span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }

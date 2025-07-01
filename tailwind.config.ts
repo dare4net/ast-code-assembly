@@ -2,6 +2,15 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
     darkMode: ["class"],
+    safelist: [
+      "bg-blue-500", "hover:bg-blue-600",
+      "bg-green-500", "hover:bg-green-600",
+      "bg-orange-500", "hover:bg-orange-600",
+      "bg-purple-500", "hover:bg-purple-600",
+      "bg-red-500", "hover:bg-red-600",
+      "bg-cyan-500", "hover:bg-cyan-600",
+      "bg-gray-500", "hover:bg-gray-600"
+    ],
     content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",

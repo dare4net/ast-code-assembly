@@ -17,7 +17,7 @@ export function BufferPanel({ buffer, gameState, onBufferClick }: BufferPanelPro
         <CardTitle>Buffer</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-8 gap-2">
           {buffer.map((slot, index) => (
             <button
               key={index}

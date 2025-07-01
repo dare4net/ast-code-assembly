@@ -21,8 +21,8 @@ export function MobileGameBoard({
       <CardHeader className="pb-3">
         <CardTitle className="text-lg text-center">Token Grid</CardTitle>
       </CardHeader>
-      <CardContent className="flex justify-center">
-        <div className="w-full max-w-sm">
+      <CardContent className="flex justify-center p-1 sm:p-2">
+        <div className="w-full max-w-xs sm:max-w-sm">
           <TokenGrid
             grid={grid}
             gridSize={gridSize}

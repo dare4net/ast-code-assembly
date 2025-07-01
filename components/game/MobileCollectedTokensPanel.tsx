@@ -11,7 +11,7 @@ export function MobileCollectedTokensPanel({ collectedTokens }: MobileCollectedT
         <CardTitle className="text-lg">Collected Tokens</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-sm font-mono bg-gray-100 p-3 rounded min-h-[60px] break-all">
+        <div className="text-xs sm:text-sm font-mono bg-gray-100 p-2 sm:p-3 rounded min-h-[40px] sm:min-h-[60px] break-all">
           {collectedTokens.length > 0 ? collectedTokens.join(" ") : "No tokens collected yet..."}
         </div>
       </CardContent>
