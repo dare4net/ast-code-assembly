@@ -74,6 +74,7 @@ export default function CodeDisassemblyGame() {
         // Remove from grid and add to container
         removeTokenFromGrid(position)
         addTokenToContainer(token!)
+        playSlotSound() // Play sound on successful move to container when buffer is full
       }
       // If not the right type, do nothing (token stays in grid)
       return
@@ -87,11 +88,13 @@ export default function CodeDisassemblyGame() {
     ) {
       removeTokenFromGrid(position)
       addTokenToContainer(token!)
+      playSlotSound() // Play sound on successful move to container
     } else {
       // Try to place in buffer
       const success = addTokenToBuffer(token!, tokenCategory)
       if (success) {
         removeTokenFromGrid(position)
+        playSlotSound() // Play sound on successful move to buffer
       }
     }
   }
