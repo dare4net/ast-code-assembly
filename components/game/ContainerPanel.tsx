@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { TOKEN_CATEGORIES } from "@/constants/tokens"
 import type { Container } from "@/types/game"
+import { getPastelBgForCategory } from "./containerPastelBg"
 
 interface ContainerPanelProps {
   containers: Container[]
@@ -16,7 +17,7 @@ export function ContainerPanel({ containers, currentContainerIndex }: ContainerP
   return (
     <div className="space-y-4">
       {/* Current Container */}
-      <Card>
+      <Card style={{ background: getPastelBgForCategory(currentContainer.category) }}>
         <CardHeader>
           <CardTitle>Current Container</CardTitle>
         </CardHeader>

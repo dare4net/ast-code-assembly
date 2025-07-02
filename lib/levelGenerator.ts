@@ -1,4 +1,4 @@
-import { PROGRAM_DEFINITIONS, STRUCTURED_TEMPLATES } from "@/constants/templates"
+import { PROGRAM_DEFINITIONS, STRUCTURED_TEMPLATES, generatePatternFromTokens } from "@/constants/templates"
 import { parseProgram } from "./programParser"
 import { placeTokensInGrid, validateLevel } from "@/lib/levelValidator"
 import type { ValidatedLevel } from "@/types/game"
@@ -35,7 +35,6 @@ function generateLevelBase(templateIndex?: number, useStructured = false) {
 
     // Build container requests from pattern (now generated dynamically)
     // Generate pattern from optimalSolution
-    const { generatePatternFromTokens } = require("@/constants/templates")
     const pattern = generatePatternFromTokens(template.optimalSolution)
     const containerRequests = pattern.map((p: any) => ({
       category: p.category,
@@ -113,7 +112,8 @@ function generateLevelBase(templateIndex?: number, useStructured = false) {
 
 // Get available program templates for UI
 export function getAvailableTemplates() {
-  return PROGRAM_DEFINITIONS.map((def, index) => ({
+  // Use STRUCTURED_TEMPLATES instead of PROGRAM_DEFINITIONS
+  return STRUCTURED_TEMPLATES.map((def, index) => ({
     index,
     name: def.name,
     description: def.description,

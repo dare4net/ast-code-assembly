@@ -26,6 +26,7 @@ import { MobileCollectedTokensPanel } from "@/components/game/MobileCollectedTok
 export default function CodeDisassemblyGame() {
   const isMobile = useMobile()
   const playSlotSound = useSound("/slot-move.mp3", 0.5)
+  const playContainerCompleteSound = useSound("/slot-move2.mp3", 0.7)
 
   const {
     level,
@@ -73,8 +74,12 @@ export default function CodeDisassemblyGame() {
       ) {
         // Remove from grid and add to container
         removeTokenFromGrid(position)
+        // Play complete sound if this token will complete the container
+        if (currentContainer.collected.length + 1 === currentContainer.count) {
+          playContainerCompleteSound()
+        }
         addTokenToContainer(token!)
-        playSlotSound() // Play sound on successful move to container when buffer is full
+        playSlotSound()
       }
       // If not the right type, do nothing (token stays in grid)
       return
@@ -87,14 +92,18 @@ export default function CodeDisassemblyGame() {
       currentContainer.collected.length < currentContainer.count
     ) {
       removeTokenFromGrid(position)
+      // Play complete sound if this token will complete the container
+      if (currentContainer.collected.length + 1 === currentContainer.count) {
+        playContainerCompleteSound()
+      }
       addTokenToContainer(token!)
-      playSlotSound() // Play sound on successful move to container
+      playSlotSound()
     } else {
       // Try to place in buffer
       const success = addTokenToBuffer(token!, tokenCategory)
       if (success) {
         removeTokenFromGrid(position)
-        playSlotSound() // Play sound on successful move to buffer
+        playSlotSound()
       }
     }
   }
@@ -109,8 +118,13 @@ export default function CodeDisassemblyGame() {
       (currentContainer.category === bufferSlot.category || bufferSlot.category === "gray") &&
       currentContainer.collected.length < currentContainer.count
     ) {
+      // Play complete sound if this token will complete the container
+      if (currentContainer.collected.length + 1 === currentContainer.count) {
+        playContainerCompleteSound()
+      }
       const token = removeTokenFromBuffer(bufferIndex)!
       addTokenToContainer(token)
+      playSlotSound()
     }
   }
 
@@ -219,10 +233,7 @@ export default function CodeDisassemblyGame() {
                   // End the game and trigger validation UI
                   // This will set gameState to 'complete' via addTokenToContainer logic
                   // But if not, force it:
-                  if (gameState !== "complete") {
-                    // setGameState is not exposed, so simulate by filling containers
-                    // This is a workaround: just call addTokenToContainer with a dummy to trigger state
-                  }
+                  // (No-op: setGameState is not exposed, so this is just a placeholder)
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
@@ -234,21 +245,27 @@ export default function CodeDisassemblyGame() {
           {/* Game Status for mobile */}
           {gameState === "complete" && (
             <div className="text-center mt-4">
-              {validateCode(collectedTokens) ? (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                  🎉 Congratulations! You've completed the level!
-                  <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
-                    Final Program: {collectedTokens.join(" ")}
+              {(() => {
+                const validation = validateCode(collectedTokens);
+                return validation.valid ? (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                    🎉 Congratulations! You've completed the level!
+                    <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                      Final Program: {collectedTokens.join(" ")}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                  ⚠️ The assembled code is not valid JavaScript. Please try again!
-                  <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
-                    Final Program: {collectedTokens.join(" ")}
+                ) : (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    ⚠️ The assembled code is not valid JavaScript. Please try again!
+                    <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                      Final Program: {collectedTokens.join(" ")}
+                    </div>
+                    <div className="mt-2 text-xs text-red-700 font-mono">
+                      Error: {validation.error}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           )}
         </div>
@@ -297,21 +314,27 @@ export default function CodeDisassemblyGame() {
         {/* Game Status */}
         {gameState === "complete" && (
           <div className="text-center mt-4">
-            {validateCode(collectedTokens) ? (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                🎉 Congratulations! You've completed the level!
-                <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
-                  Final Program: {collectedTokens.join(" ")}
+            {(() => {
+              const validation = validateCode(collectedTokens);
+              return validation.valid ? (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                  🎉 Congratulations! You've completed the level!
+                  <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                    Final Program: {collectedTokens.join(" ")}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                ⚠️ The assembled code is not valid JavaScript. Please try again!
-                <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
-                  Final Program: {collectedTokens.join(" ")}
+              ) : (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                  ⚠️ The assembled code is not valid JavaScript. Please try again!
+                  <div className="mt-2 text-sm font-mono bg-white p-2 rounded">
+                    Final Program: {collectedTokens.join(" ")}
+                  </div>
+                  <div className="mt-2 text-xs text-red-700 font-mono">
+                    Error: {validation.error}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         )}
       </div>

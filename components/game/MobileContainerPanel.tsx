@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { TOKEN_CATEGORIES } from "@/constants/tokens"
 import type { Container } from "@/types/game"
+import { getPastelBgForCategory } from "./containerPastelBg"
 
 interface MobileContainerPanelProps {
   containers: Container[]
@@ -36,7 +37,7 @@ export function MobileContainerPanel({ containers, currentContainerIndex }: Mobi
       )}
 
       {/* Current Container (should be below next) */}
-      <Card>
+      <Card style={{ background: currentContainer ? getPastelBgForCategory(currentContainer.category) : undefined }}>
         <CardHeader className="pb-2 sm:pb-3">
           <CardTitle className="text-lg">Current Container</CardTitle>
         </CardHeader>

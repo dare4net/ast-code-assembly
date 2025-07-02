@@ -4,19 +4,27 @@ import { useState, useCallback } from "react"
 import type { GameState, Container, BufferSlot, ValidatedLevel } from "@/types/game"
 import { generateLevel } from "@/lib/levelGenerator"
 
+function getBufferSize(gridSize: number): number {
+  if (gridSize === 5) return 3
+  if (gridSize === 6) return 4
+  if (gridSize === 7) return 5
+  // Add more rules as needed
+  return 3 // default fallback
+}
+
 export function useGameState() {
   const [level, setLevel] = useState<ValidatedLevel | null>(null)
   const [grid, setGrid] = useState<(string | null)[]>([])
   const [gridSize, setGridSize] = useState<number>(5)
   const [containers, setContainers] = useState<Container[]>([])
   const [currentContainerIndex, setCurrentContainerIndex] = useState(0)
-  const [buffer, setBuffer] = useState<BufferSlot[]>(Array(5).fill({ token: null, category: null }))
+  const [buffer, setBuffer] = useState<BufferSlot[]>(Array(getBufferSize(5)).fill({ token: null, category: null }))
   const [collectedTokens, setCollectedTokens] = useState<string[]>([])
   const [gameState, setGameState] = useState<GameState>("playing")
 
   const initializeGame = useCallback((templateIndex?: number) => {
     const newLevel = generateLevel(templateIndex)
-    
+
     // Only proceed if level is valid
     if (!newLevel.isValid) {
       console.error("Generated level is invalid, retrying...")
@@ -50,7 +58,7 @@ export function useGameState() {
     }
 
     setCurrentContainerIndex(0)
-    setBuffer(Array(5).fill({ token: null, category: null }))
+    setBuffer(Array(getBufferSize(newLevel.size)).fill({ token: null, category: null }))
     setCollectedTokens([])
     setGameState("playing")
   }, [])
